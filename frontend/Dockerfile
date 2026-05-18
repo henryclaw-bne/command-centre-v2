@@ -9,6 +9,6 @@ COPY . .
 
 RUN npm run build
 
-ENV PORT=3000
-EXPOSE 3000
-CMD ["sh", "-c", "npm run start -- -p ${PORT:-3000}"]
+ENV NEXT_TELEMETRY_DISABLED=1
+
+CMD ["sh", "-c", "node_modules/.bin/next start -H 0.0.0.0 -p ${PORT:-3000}"]
