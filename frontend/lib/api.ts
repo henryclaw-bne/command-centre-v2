@@ -77,7 +77,13 @@ export type CustomerOverview = {
   latest_activity: TimelineEvent[];
 };
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
+const BACKEND_URL =
+  process.env.NEXT_PUBLIC_BACKEND_URL ||
+  (process.env.NODE_ENV === "development" ? "http://localhost:8000" : "");
+
+if (!BACKEND_URL) {
+  throw new Error("NEXT_PUBLIC_BACKEND_URL must be configured for production deployment.");
+}
 
 export async function getCustomers(): Promise<Customer[]> {
   const response = await fetch(`${BACKEND_URL}/api/customers`, { cache: "no-store" });

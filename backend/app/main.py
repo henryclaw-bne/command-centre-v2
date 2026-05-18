@@ -1,11 +1,17 @@
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+import logging
 
 from .api.customers import router as customers_router
 from .api.dashboard import router as dashboard_router
+from .api.health import router as health_router
 from .api.upload import router as upload_router
 from .db import init_db
+
+# Configure logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 app = FastAPI(title="Technowand Command Centre MVP")
 app.add_middleware(
@@ -18,6 +24,7 @@ app.add_middleware(
 app.include_router(upload_router, prefix="/api")
 app.include_router(customers_router, prefix="/api")
 app.include_router(dashboard_router, prefix="/api")
+app.include_router(health_router, prefix="/api")
 
 
 @app.exception_handler(HTTPException)

@@ -3,6 +3,9 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Optional
 
+from sqlalchemy.orm import Mapped, relationship
+
+from sqlalchemy.orm import Mapped
 from sqlmodel import Field, Relationship, SQLModel
 
 
@@ -16,8 +19,7 @@ class Customer(SQLModel, table=True):
     industry: Optional[str] = None
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
-
-    tickets: list["Ticket"] = Relationship(back_populates="customer")
+    tickets: Mapped[list["Ticket"]] = Relationship(sa_relationship=relationship("Ticket", back_populates="customer"))
 
 
 class Ticket(SQLModel, table=True):
@@ -40,8 +42,7 @@ class Ticket(SQLModel, table=True):
     last_updated_at: Optional[datetime] = None
     description: Optional[str] = None
     imported_at: datetime = Field(default_factory=datetime.utcnow)
-
-    customer: Optional["Customer"] = Relationship(back_populates="tickets")
+    customer: Mapped[Optional["Customer"]] = Relationship(sa_relationship=relationship("Customer", back_populates="tickets"))
 
 
 class TimelineEvent(SQLModel, table=True):

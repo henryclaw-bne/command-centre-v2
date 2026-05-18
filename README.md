@@ -74,6 +74,7 @@ The application uses SQLite by default for local development. The database file 
 3. Add environment variables:
    - `DATABASE_URL`: PostgreSQL connection string (Railway provides this automatically)
    - `NEXT_PUBLIC_BACKEND_URL`: Your Railway backend URL
+   - `DEMO_PASSWORD`: A shared internal demo access password
 4. Deploy the backend and frontend services
 
 ## API Documentation

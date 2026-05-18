@@ -3,6 +3,7 @@ from typing import List
 
 from fastapi import APIRouter, Depends
 from sqlmodel import Session, select
+from sqlalchemy.orm import joinedload
 
 from ..db import get_session
 from ..models import Customer, Ticket
@@ -17,11 +18,18 @@ SLA_EXPOSURE_STATES = {"Outside", "Awaiting Response", "With User", "With Vendor
 
 @router.get("/dashboard", response_model=DashboardResponse)
 def get_dashboard(*, session: Session = Depends(get_session)):
+    # Load tickets
     tickets = session.exec(select(Ticket)).all()
+
+    # Build customer lookup
+    customer_ids = {ticket.customer_id for ticket in tickets if ticket.customer_id}
+    customers = session.exec(select(Customer).where(Customer.id.in_(customer_ids))).all()
+    customer_lookup = {customer.id: customer for customer in customers}
 
     status_counts = Counter(ticket.status or "Unknown" for ticket in tickets)
     customer_counts = Counter(
-        ticket.customer.name if ticket.customer else "Unknown Customer" for ticket in tickets
+        customer_lookup[ticket.customer_id].name if ticket.customer_id and ticket.customer_id in customer_lookup else "Unknown Customer"
+        for ticket in tickets
     )
     agent_counts = Counter(ticket.agent or "Unassigned" for ticket in tickets)
 
@@ -51,7 +59,7 @@ def get_dashboard(*, session: Session = Depends(get_session)):
                 title=ticket.title,
                 opened_at=ticket.opened_at,
                 status=ticket.status,
-                customer_name=ticket.customer.name if ticket.customer else None,
+                customer_name=customer_lookup[ticket.customer_id].name if ticket.customer_id and ticket.customer_id in customer_lookup else None,
                 agent=ticket.agent,
             )
             for ticket in oldest_open

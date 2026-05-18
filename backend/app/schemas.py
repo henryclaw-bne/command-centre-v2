@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Dict, List, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class TicketRead(BaseModel):
@@ -47,7 +47,7 @@ class CustomerRead(BaseModel):
     account_owner: Optional[str] = None
     status: Optional[str] = None
     industry: Optional[str] = None
-    tickets: List[TicketRead] = []
+    tickets: List[TicketRead] = Field(default_factory=list)
 
     class Config:
         orm_mode = True
@@ -60,7 +60,7 @@ class CustomerOverview(BaseModel):
     open_tickets: int
     missing_response_count: int
     sla_exposure_count: int
-    latest_activity: List[TimelineEventRead] = []
+    latest_activity: List[TimelineEventRead] = Field(default_factory=list)
 
 
 class StatusCount(BaseModel):
