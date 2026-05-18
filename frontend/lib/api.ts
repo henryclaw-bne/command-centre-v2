@@ -77,16 +77,18 @@ export type CustomerOverview = {
   latest_activity: TimelineEvent[];
 };
 
-const BACKEND_URL =
-  process.env.NEXT_PUBLIC_BACKEND_URL ||
-  (process.env.NODE_ENV === "development" ? "http://localhost:8000" : "");
-
-if (!BACKEND_URL) {
-  throw new Error("NEXT_PUBLIC_BACKEND_URL must be configured for production deployment.");
+function getBackendUrl(): string {
+  const url =
+    process.env.NEXT_PUBLIC_BACKEND_URL ||
+    (process.env.NODE_ENV === "development" ? "http://localhost:8000" : "");
+  if (!url) {
+    throw new Error("NEXT_PUBLIC_BACKEND_URL must be configured for production deployment.");
+  }
+  return url;
 }
 
 export async function getCustomers(): Promise<Customer[]> {
-  const response = await fetch(`${BACKEND_URL}/api/customers`, { cache: "no-store" });
+  const response = await fetch(`${getBackendUrl()}/api/customers`, { cache: "no-store" });
   if (!response.ok) {
     return [];
   }
@@ -94,7 +96,7 @@ export async function getCustomers(): Promise<Customer[]> {
 }
 
 export async function getDashboard(): Promise<DashboardSummary> {
-  const response = await fetch(`${BACKEND_URL}/api/dashboard`, { cache: "no-store" });
+  const response = await fetch(`${getBackendUrl()}/api/dashboard`, { cache: "no-store" });
   if (!response.ok) {
     return {
       total_tickets: 0,
@@ -125,7 +127,7 @@ export async function getDashboard(): Promise<DashboardSummary> {
 }
 
 export async function getCustomerOverview(customerId: number): Promise<CustomerOverview> {
-  const response = await fetch(`${BACKEND_URL}/api/customers/${customerId}/overview`, { cache: "no-store" });
+  const response = await fetch(`${getBackendUrl()}/api/customers/${customerId}/overview`, { cache: "no-store" });
   if (!response.ok) {
     throw new Error("Failed to load customer overview");
   }
@@ -133,12 +135,12 @@ export async function getCustomerOverview(customerId: number): Promise<CustomerO
 }
 
 export async function getCustomerTickets(customerId: number): Promise<Ticket[]> {
-  const response = await fetch(`${BACKEND_URL}/api/customers/${customerId}/tickets`, { cache: "no-store" });
+  const response = await fetch(`${getBackendUrl()}/api/customers/${customerId}/tickets`, { cache: "no-store" });
   return response.json();
 }
 
 export async function getCustomerTimeline(customerId: number): Promise<TimelineEvent[]> {
-  const response = await fetch(`${BACKEND_URL}/api/customers/${customerId}/timeline`, { cache: "no-store" });
+  const response = await fetch(`${getBackendUrl()}/api/customers/${customerId}/timeline`, { cache: "no-store" });
   return response.json();
 }
 
@@ -146,7 +148,7 @@ export async function uploadCsv(file: File): Promise<UploadResponse> {
   const data = new FormData();
   data.append("file", file);
 
-  const response = await fetch(`${BACKEND_URL}/api/upload-csv`, {
+  const response = await fetch(`${getBackendUrl()}/api/upload-csv`, {
     method: "POST",
     body: data,
   });

@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { getCustomerOverview, getCustomerTickets } from "../../../lib/api";
 
+export const dynamic = "force-dynamic";
+
 type Props = {
   params: {
     id: string;

@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { getCustomers } from "../../lib/api";
 
+export const dynamic = "force-dynamic";
+
 export default async function CustomersPage() {
   const customers = await getCustomers();
 
