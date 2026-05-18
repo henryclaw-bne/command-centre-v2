@@ -11,4 +11,4 @@ RUN npm run build
 
 ENV PORT=3000
 EXPOSE 3000
-CMD ["sh", "-lc", "npm run start -- -p ${PORT}"]
+CMD ["sh", "-c", "npm run start -- -p ${PORT:-3000}"]
